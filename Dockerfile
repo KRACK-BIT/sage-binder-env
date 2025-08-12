@@ -59,24 +59,16 @@ ENV NB_UID=1000
 ENV HOME=/home/${NB_USER}
 RUN adduser --disabled-password --gecos "Default user" --uid ${NB_UID} ${NB_USER}
 
+# Switch to the user
+USER ${NB_USER}
+
 ###--CUSTOM-PIP-DEPENDENCIES--##
 # NOTE: should do this *before* notebooks are copied, so each notebook change doesn't invalidate the manim install stage
-
-USER ${NB_USER}
 
 RUN /sage/sage -pip install --no-cache-dir \
     manim
 
-USER root
-
 ###--CUSTOM_END--###
-
-# Make sure the contents of the notebooks directory are in ${HOME}
-COPY notebooks/* ${HOME}/
-RUN chown -R ${NB_USER}:${NB_USER} ${HOME}
-
-# Switch to the user
-USER ${NB_USER}
 
 # Install Sage kernel to Jupyter
 RUN mkdir -p $(jupyter --data-dir)/kernels
@@ -101,5 +93,15 @@ RUN echo "\
     logging.getLogger('LabApp').addFilter(NoNodeJSWarningFilter())\n\
     " > /home/${NB_USER}/.jupyter/jupyter_lab_config.py
 
-#> For debugging, uncomment and run `docker run --rm -it $(docker build -q .)`
+###===END_OF_DOCKER_IMAGE===###
+
+USER root
+
+# Make sure the contents of the notebooks directory are in ${HOME}
+COPY notebooks/* ${HOME}/
+RUN chown -R ${NB_USER}:${NB_USER} ${HOME}
+
+#> For debugging, set to `USER root` and run `docker run --rm -it $(docker build -q .)`
+USER ${NB_USER}
 # USER root
+
