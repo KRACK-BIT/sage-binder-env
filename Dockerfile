@@ -35,8 +35,8 @@ RUN apt-get update -qq \
 
 RUN apt-get update -qq \
     && apt-get install -y \
-    --no-install-recommends \
-    --no-install-suggests \
+    # --no-install-recommends \
+    # --no-install-suggests \
     \
     #> Manim: optional dependencies
     #
