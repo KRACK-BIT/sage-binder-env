@@ -5,6 +5,36 @@ FROM ghcr.io/sagemath/sage-binder-env:10.7
 
 USER root
 
+###--CUSTOM-APT-DEPENDENCIES--##
+
+RUN apt-get update -qq \
+    && apt-get install -y \
+    --no-install-recommends \
+    --no-install-suggests \
+    \
+    #> Manim dependencies
+    libcairo2-dev \
+    libffi-dev \
+    libpango1.0-dev \
+    freeglut3-dev \
+    ffmpeg \
+    fonts-noto \
+    \
+    # build-essential \
+    # gcc \
+    # cmake \
+    \
+    # pkg-config \
+    # make \
+    # wget \
+    # ghostscript \
+    \
+    && apt-get autoclean \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+###--CUSTOM_END--###
+
 # Create user with uid 1000
 ARG NB_USER=user
 ARG NB_UID=1000
@@ -34,11 +64,19 @@ WORKDIR /home/${NB_USER}
 # suppress the perpetual nodejs warning
 RUN mkdir -p /home/${NB_USER}/.jupyter
 RUN echo "\
-import logging\n\
-\n\
-class NoNodeJSWarningFilter(logging.Filter):\n\
+    import logging\n\
+    \n\
+    class NoNodeJSWarningFilter(logging.Filter):\n\
     def filter(self, record):\n\
-        return 'Could not determine jupyterlab build status without nodejs' not in record.getMessage()\n\
-\n\
-logging.getLogger('LabApp').addFilter(NoNodeJSWarningFilter())\n\
-" > /home/${NB_USER}/.jupyter/jupyter_lab_config.py
+    return 'Could not determine jupyterlab build status without nodejs' not in record.getMessage()\n\
+    \n\
+    logging.getLogger('LabApp').addFilter(NoNodeJSWarningFilter())\n\
+    " > /home/${NB_USER}/.jupyter/jupyter_lab_config.py
+
+###--CUSTOM-PIP-DEPENDENCIES--##
+
+RUN sage -pip install --no-cache-dir \
+    manim
+
+# USER root
+###--CUSTOM_END--###
