@@ -20,6 +20,11 @@ RUN apt-get update -qq \
     ffmpeg \
     fonts-noto \
     \
+    # OPTIONAL LaTex 1: install texlive, but be warned, these are *big*
+    texlive-science \
+    # OPTIONAL Latex 2: install texlive-full, for full features, but *massive* size (~6 GB)
+    # texlive-full \
+    \
     # build-essential \
     # gcc \
     # cmake \
@@ -78,5 +83,6 @@ RUN echo "\
 RUN sage -pip install --no-cache-dir \
     manim
 
-# USER root
+#> For debugging, uncomment and run `docker run --rm -it $(docker build -q .)`
+USER root
 ###--CUSTOM_END--###
