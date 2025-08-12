@@ -12,18 +12,13 @@ RUN apt-get update -qq \
     --no-install-recommends \
     --no-install-suggests \
     \
-    #> Manim dependencies
+    #> Manim: critical dependencies
     libcairo2-dev \
     libffi-dev \
     libpango1.0-dev \
     freeglut3-dev \
     ffmpeg \
     fonts-noto \
-    \
-    # OPTIONAL LaTex 1: install texlive, but be warned, these are *big*
-    # texlive-science \
-    # OPTIONAL Latex 2: install texlive-full, for full features, but *massive* size (~6 GB)
-    texlive-full \
     \
     # build-essential \
     # gcc \
@@ -33,6 +28,22 @@ RUN apt-get update -qq \
     # make \
     # wget \
     # ghostscript \
+    \
+    && apt-get autoclean \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update -qq \
+    && apt-get install -y \
+    --no-install-recommends \
+    --no-install-suggests \
+    \
+    #> Manim: optional dependencies
+    #
+    # LaTex - OPTION 1: install texlive, but be warned, these are *big*
+    # texlive-science \
+    # LaTex - OPTION 1: install texlive-full, for full features, but *massive* size (~6 GB)
+    texlive-full \
     \
     && apt-get autoclean \
     && apt-get clean \
