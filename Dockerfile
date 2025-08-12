@@ -21,9 +21,9 @@ RUN apt-get update -qq \
     fonts-noto \
     \
     # OPTIONAL LaTex 1: install texlive, but be warned, these are *big*
-    texlive-science \
+    # texlive-science \
     # OPTIONAL Latex 2: install texlive-full, for full features, but *massive* size (~6 GB)
-    # texlive-full \
+    texlive-full \
     \
     # build-essential \
     # gcc \
