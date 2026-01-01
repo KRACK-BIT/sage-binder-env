@@ -8,6 +8,12 @@ USER root
 ###--CUSTOM-APT-DEPENDENCIES--##
 
 RUN apt-get update -qq \
+    && apt-get upgrade -y \
+    && apt-get autoclean \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update -qq \
     && apt-get install -y \
     --no-install-recommends \
     --no-install-suggests \
@@ -49,6 +55,45 @@ RUN apt-get update -qq \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update -qq \
+    && apt-get install -y \
+    \
+    python3-dask \
+    python3-distributed \
+    \
+    && apt-get autoclean \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+    
+# <https://github.com/pythonprofilers/memory_profiler>
+# <https://github.com/bloomberg/memray>
+RUN apt-get update -qq \
+    && apt-get install -y \
+    \
+    dot2tex \
+    xxhash \
+    \
+    python3-memory-profiler \
+    google-perftools \
+    \
+    jq \
+    \
+    less \
+    bat \
+    \
+    && apt-get autoclean \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install --no-warn-script-location --no-cache-dir jupyter-server-proxy memray
+# dask-labextension
+# RUN jupyter labextension disable dask-labextension
+
+RUN mkdir /data
+
+RUN mv /sage/venv/share/jupyter/kernels/sagemath/kernel.json /sage/venv/share/jupyter/kernels/sagemath/kernel.json.old
+RUN jq -Mc '. + {"metadata": {"debugger": true}}' /sage/venv/share/jupyter/kernels/sagemath/kernel.json.old > /sage/venv/share/jupyter/kernels/sagemath/kernel.json
+
 ###--CUSTOM_END--###
 
 # Create user with uid 1000
@@ -66,7 +111,12 @@ USER ${NB_USER}
 # NOTE: should do this *before* notebooks are copied, so each notebook change doesn't invalidate the manim install stage
 
 RUN /sage/sage -pip install --no-cache-dir \
-    manim
+    manim \
+    dot2tex \
+    igraph \
+    \
+    memray \
+    line-profiler
 
 ###--CUSTOM_END--###
 
@@ -84,14 +134,17 @@ WORKDIR /home/${NB_USER}
 # suppress the perpetual nodejs warning
 RUN mkdir -p /home/${NB_USER}/.jupyter
 RUN echo "\
-    import logging\n\
-    \n\
-    class NoNodeJSWarningFilter(logging.Filter):\n\
+import logging\n\
+\n\
+class NoNodeJSWarningFilter(logging.Filter):\n\
     def filter(self, record):\n\
-    return 'Could not determine jupyterlab build status without nodejs' not in record.getMessage()\n\
-    \n\
-    logging.getLogger('LabApp').addFilter(NoNodeJSWarningFilter())\n\
-    " > /home/${NB_USER}/.jupyter/jupyter_lab_config.py
+        return 'Could not determine jupyterlab build status without nodejs' not in record.getMessage()\n\
+\n\
+logging.getLogger('LabApp').addFilter(NoNodeJSWarningFilter())\n\
+" > /home/${NB_USER}/.jupyter/jupyter_lab_config.py
+
+RUN jupyter notebook --generate-config
+RUN echo "c.JupyterNotebookApp.default_url = '/lab'" >> /home/${NB_USER}/.jupyter/jupyter_notebook_config.py
 
 ###===END_OF_DOCKER_IMAGE===###
 
