@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for slim Sage
 # https://docs.docker.com/build/building/multi-stage
 
-FROM ghcr.io/sagemath/sage/sage-ubuntu-jammy-minimal-with-targets:10.7 AS target
+FROM ghcr.io/sagemath/sage/sage-ubuntu-jammy-minimal-with-targets:10.8 AS target
 
 # Resolve symbolic links to recreate them later
 RUN readlink /sage/prefix >> /sage/prefix_link
@@ -20,7 +20,7 @@ RUN find /sage -type d -name "__pycache__" -exec rm -rf {} +
 # Remove all .c .cpp files corresponding to .pyx files
 RUN find /sage -name "*.pyx" | sed 's/\(.*\)[.]pyx$/\1.c \1.cpp/' | xargs rm -f +
 
-FROM ghcr.io/sagemath/sage/sage-ubuntu-jammy-minimal-with-system-packages:10.7
+FROM ghcr.io/sagemath/sage/sage-ubuntu-jammy-minimal-with-system-packages:10.8
 
 USER root
 
