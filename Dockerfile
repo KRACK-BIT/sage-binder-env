@@ -64,7 +64,7 @@ RUN apt-get update -qq \
     && apt-get autoclean \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-    
+
 # <https://github.com/pythonprofilers/memory_profiler>
 # <https://github.com/bloomberg/memray>
 RUN apt-get update -qq \
@@ -85,7 +85,22 @@ RUN apt-get update -qq \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --no-warn-script-location --no-cache-dir jupyter-server-proxy memray
+RUN apt-get update -qq \
+    && apt-get install -y \
+    \
+    black \
+    isort \
+    \
+    && apt-get autoclean \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+
+RUN python3 -m pip install --no-warn-script-location --no-cache-dir \
+    jupyter-server-proxy \
+    jupyterlab-code-formatter \
+    memray
+
 # dask-labextension
 # RUN jupyter labextension disable dask-labextension
 
@@ -133,18 +148,13 @@ WORKDIR /home/${NB_USER}
 # Create the jupyter_lab_config.py file with a custom logging filter to
 # suppress the perpetual nodejs warning
 RUN mkdir -p /home/${NB_USER}/.jupyter
-RUN echo "\
-import logging\n\
-\n\
-class NoNodeJSWarningFilter(logging.Filter):\n\
-    def filter(self, record):\n\
-        return 'Could not determine jupyterlab build status without nodejs' not in record.getMessage()\n\
-\n\
-logging.getLogger('LabApp').addFilter(NoNodeJSWarningFilter())\n\
-" > /home/${NB_USER}/.jupyter/jupyter_lab_config.py
+COPY config/jupyter_lab_config.py  /home/${NB_USER}/.jupyter/jupyter_lab_config.py
 
 RUN jupyter notebook --generate-config
 RUN echo "c.JupyterNotebookApp.default_url = '/lab'" >> /home/${NB_USER}/.jupyter/jupyter_notebook_config.py
+
+RUN mkdir -p  /home/${NB_USER}/.jupyter/lab/user-settings
+COPY config/user-settings/ /home/${NB_USER}/.jupyter/lab/user-settings
 
 ###===END_OF_DOCKER_IMAGE===###
 

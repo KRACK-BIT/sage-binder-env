@@ -1,0 +1,18 @@
+{
+  // Table of Contents
+  // @jupyterlab/toc-extension:registry
+  // Default table of contents settings.
+  // ***********************************
+
+  // Maximal headings depth
+  // [missing schema description]
+  "maximalDepth": 6,
+
+  // Enable headings numbering
+  // Whether to automatically number the headings or not.
+  "numberHeaders": true,
+
+  // Synchronize collapse state
+  // If set to true, when a heading is collapsed in the table of contents the corresponding section in the document is collapsed as well and vice versa. This inhibits the cell output headings.
+  "syncCollapseState": true
+}

@@ -1,0 +1,14 @@
+{
+  "cacheFormatters": true,
+  "formatOnSave": true,
+  "preferences": {
+    "default_formatter": {
+      "python": ["isort", "black"],
+      "sage": ["isort", "black"],
+      "R": "formatR",
+      "rust": "rustfmt",
+      "c++11": "astyle"
+    }
+  },
+  "suppressFormatterErrorsIFFAutoFormatOnSave": true
+}

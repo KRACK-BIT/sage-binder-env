@@ -1,0 +1,11 @@
+{
+  // Code Completion
+  // @jupyterlab/completer-extension:manager
+  // Code Completion settings.
+  // ***************************************
+
+  // Determines if it is *proactive* autocomplete
+  // "autoCompletion": true,
+
+  "showDocumentationPanel": true
+}

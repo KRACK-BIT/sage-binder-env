@@ -1,0 +1,58 @@
+{
+  // Notebook
+  // @jupyterlab/notebook-extension:tracker
+  // Notebook settings.
+  // **************************************
+
+  // Code Cell Configuration
+  // The configuration for all code cells; it will override the CodeMirror default configuration.
+  "codeCellConfig": {
+    "lineNumbers": true,
+    "lineWrap": false,
+    "autoClosingBrackets": true
+  },
+
+  // Markdown Cell Configuration
+  // The configuration for all markdown cells; it will override the CodeMirror default configuration.
+  "markdownCellConfig": {
+    "lineNumbers": true,
+    "matchBrackets": false,
+    "autoClosingBrackets": true
+  },
+
+  // Raw Cell Configuration
+  // The configuration for all raw cells; it will override the CodeMirror default configuration.
+  "rawCellConfig": {
+    "lineNumbers": true,
+    "matchBrackets": false,
+    "autoClosingBrackets": true
+  },
+
+  // Automatically render markdown when cursor leaves markdown cells
+  // Whether to render markdown cells when the cursor moves out of them.
+  "autoRenderMarkdownCells": true,
+
+  // Automatically Start Preferred Kernel
+  // Whether to automatically start the preferred kernel.
+  "autoStartDefaultKernel": true,
+
+  // Kernel history access
+  // Enable kernel history access from notebook cells. Enabling this allows you to scroll through kernel history from a given notebook cell.
+  "accessKernelHistory": true,
+
+  // Recording timing
+  // Should timing data be recorded in cell metadata
+  "recordTiming": true,
+
+  // Show minimap
+  // Whether to show the notebook minimap (virtual scrollbar) by default for all notebooks.
+  "showMinimap": true,
+
+  // Kernel status icon configuration
+  // Defines the position and components of execution progress indicator.
+  "kernelStatus": {
+    "showOnStatusBar": false,
+    "showProgress": true,
+    "showJumpToRecentExecutionButton": true
+  }
+}

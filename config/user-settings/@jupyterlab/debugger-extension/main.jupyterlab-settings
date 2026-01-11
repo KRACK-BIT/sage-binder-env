@@ -1,0 +1,10 @@
+{
+  // Debugger
+  // @jupyterlab/debugger-extension:main
+  // Debugger settings
+  // ***********************************
+
+  // Auto Collapse Debugger Sidebar
+  // Collapse the debugger sidebar when disabling the debugger on a document.
+  "autoCollapseDebuggerSidebar": true
+}
