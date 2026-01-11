@@ -1,4 +1,9 @@
 {
+  // Jupyterlab Code Formatter
+  // jupyterlab_code_formatter:settings
+  // Jupyterlab Code Formatter settings.
+  // ***********************************
+
   "cacheFormatters": true,
   "formatOnSave": true,
   "preferences": {
@@ -10,5 +15,24 @@
       "c++11": "astyle"
     }
   },
-  "suppressFormatterErrorsIFFAutoFormatOnSave": true
+  "suppressFormatterErrorsIFFAutoFormatOnSave": true,
+
+  // Black Config
+  // Config to be passed into black's format_str function call.
+  "black": {
+    "line_length": 88,
+    "string_normalization": true
+  },
+
+  // Isort Config
+  // Config to be passed into isort's SortImports function call.
+  "isort": {
+    // "multi_line_output": 3,
+    // "include_trailing_comma": true,
+    // "force_grid_wrap": 0,
+    // "use_parentheses": true,
+    // "ensure_newline_before_comments": true,
+    // "line_length": 88,
+    "profile": "black"
+  }
 }
