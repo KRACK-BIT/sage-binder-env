@@ -9,16 +9,25 @@ RUN readlink /sage/venv >> /sage/venv_link
 
 WORKDIR /sage
 
-# Strip executables in /sage
-RUN LC_ALL=C find local src pkgs -type f -exec strip '{}' ';' 2>&1 | grep -v "file format not recognized" || true
-
 # Clean up before copying in the next stage
-RUN rm -rf local/share/doc local/share/*/doc local/share/*/examples local/share/singular/html
+RUN rm -rf \
+    /sage/local/share/doc \
+    /sage/local/share/*/doc \
+    /sage/local/share/*/examples \
+    /sage/local/share/singular/html
 
 # Remove all __pycache__ directories
 RUN find /sage -type d -name "__pycache__" -exec rm -rf {} +
+
 # Remove all .c .cpp files corresponding to .pyx files
 RUN find /sage -name "*.pyx" | sed 's/\(.*\)[.]pyx$/\1.c \1.cpp/' | xargs rm -f +
+
+# Strip executables in /sage
+RUN LC_ALL=C find \
+    /sage/local \
+    /sage/src \
+    /sage/pkgs \
+    -type f -exec strip '{}' ';' 2>&1 | grep -v "file format not recognized" || true
 
 FROM ghcr.io/sagemath/sage/sage-ubuntu-jammy-minimal-with-system-packages:10.8
 
