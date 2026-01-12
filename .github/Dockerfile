@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for slim Sage
 # https://docs.docker.com/build/building/multi-stage
 
-FROM ghcr.io/sagemath/sage/sage-ubuntu-jammy-minimal-with-targets:10.8 AS target
+FROM ghcr.io/sagemath/sage/sage-ubuntu-noble-standard-with-targets:10.8 AS target
 
 # Resolve symbolic links to recreate them later
 RUN readlink /sage/prefix >> /sage/prefix_link
@@ -29,7 +29,7 @@ RUN LC_ALL=C find \
     /sage/pkgs \
     -type f -exec strip '{}' ';' 2>&1 | grep -v "file format not recognized" || true
 
-FROM ghcr.io/sagemath/sage/sage-ubuntu-jammy-minimal-with-system-packages:10.8
+FROM ghcr.io/sagemath/sage/sage-ubuntu-noble-standard-with-system-packages:10.8
 
 USER root
 
@@ -50,7 +50,7 @@ COPY --from=target /sage/local /sage/local
 COPY --from=target /sage/src/bin /sage/src/bin
 COPY --from=target /sage/src/sage /sage/src/sage
 COPY --from=target /sage/sage /sage/sage
-COPY --from=target /sage/pkgs/sage-conf /sage/pkgs/sage-conf
+# COPY --from=target /sage/pkgs/sage-conf /sage/pkgs/sage-conf
 
 # Recreate symbolic links
 COPY --from=target /sage/prefix_link /sage/prefix_link
