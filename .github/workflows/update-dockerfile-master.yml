@@ -7,7 +7,8 @@ on:
 
 env:
   TAG: latest
-  BRANCH: master-deploy
+  BRANCH: master
+  BRANCH_DEPLOY: master-deploy
   PACKAGE_NAME: placeholder
 
 jobs:
@@ -31,12 +32,12 @@ jobs:
           echo "$PACKAGE_NAME"
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
 
-      # - name: Log in to the Container registry
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Build and push Docker image
       #   uses: docker/build-push-action@v5
@@ -49,7 +50,7 @@ jobs:
       # - name: Checkout code
       #   uses: actions/checkout@v4
       #   with:
-      #     ref: ${{ env.BRANCH }}
+      #     ref: ${{ env.BRANCH_DEPLOY }}
       # - name: Update files for Binder
       #   run: |
       #     PACKAGE_NAME=${{ env.PACKAGE_NAME }}
