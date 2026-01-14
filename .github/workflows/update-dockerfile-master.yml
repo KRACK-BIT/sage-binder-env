@@ -2,7 +2,7 @@ name: Update master image
 
 on:
   schedule:
-    - cron: "0 0 * * *" # Run every day
+    - cron: "0 0 * * 0"
   workflow_dispatch:
 
 env:
@@ -17,14 +17,12 @@ jobs:
       contents: write
       packages: write
     steps:
-      # Prepare .github/Dockerfile for slim Sage image
-
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ env.BRANCH }}
 
-      - name: Prepare Package Name
+      - name: Identify Package Version
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
@@ -47,7 +45,6 @@ jobs:
           tags: ${{ env.PACKAGE_NAME }}
 
       # Update files for Binder
-
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -57,14 +54,12 @@ jobs:
           PACKAGE_NAME=${{ env.PACKAGE_NAME }}
           PACKAGE_NAME_ESCAPED=$(echo "${PACKAGE_NAME}" | sed 's/\//\\\//g')
           sed -i "s/FROM \S*/FROM ${PACKAGE_NAME_ESCAPED}/g" Dockerfile
-          sed -i "s/FROM \S*/FROM ${PACKAGE_NAME_ESCAPED}/g" README.rst
           git config --global user.email alice@wonderland
           git config --global user.name alice
           git commit -a --amend -m "Update files for Binder"
           git push -f origin $BRANCH
 
       # Build docker image for Binder from Dockerfile at root
-
       - name: Binder build
         timeout-minutes: 30
         continue-on-error: true

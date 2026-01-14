@@ -92,39 +92,78 @@ RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     sage-data-cunningham_tables \
     && sudo pacman -Scc --noconfirm
 
-###--MANIM--###
+###--MANIM_dependencies--###
+
+RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+    # texlive \
+    \
+    texlive-latex \
+    texlive-latexextra \
+    texlive-latexrecommended \
+    \
+    texlive-xetex \
+    texlive-fontsrecommended \
+    \
+    texlive-langgreek \
+    texlive-mathscience \
+    \
+    # dvisvgm  \
+    texlive-binextra \
+    \
+    # texlive-pictures \
+    # texlive-langenglish \
+    && sudo pacman -Scc --noconfirm
+
+RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+    base-devel \
+    cairo \
+    pango \
+    ffmpeg \
+    && sudo pacman -Scc --noconfirm
+
+###--JUPYTER--###
+
+### Jupyter base dependencies
+# RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+#     jupyter-notebook \
+#     python-ipywidgets \
+#     python-jupyter-server-terminals \
+#     \
+#     && sudo pacman -Scc --noconfirm
+
+### Local Jupyter Installation Local setup
+WORKDIR ${NB_HOME}
+
+RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+    uv \
+    && sudo pacman -Scc --noconfirm
+
+RUN uv venv --system-site-packages
+RUN uv pip install --no-cache-dir \
+    notebook \
+    ipywidgets \
+    jupyterlab \
+    jupyter_server_terminals \
+    && uv cache clean && uv cache prune
+RUN uv run jupyter labextension disable "@jupyterlab/apputils-extension:announcements"
+
+RUN uv pip install --no-cache-dir \
+    notebook \
+    ipywidgets \
+    jupyterlab \
+    jupyter_server_terminals
+
+###--MANIM_install--###
 
 # RUN yay -Sy --cleanafter && yay -S --noconfirm --needed --cleanafter  \
 #     manim \
 #     # && ~/.local/bin/update_all \
 #     && yay -Syu --noconfirm --cleanafter
 
-## Jupyter
-
-### Jupyter base dependencies
-RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
-    jupyter-notebook \
-    python-ipywidgets \
-    python-jupyter-server-terminals \
-    \
-    && sudo pacman -Scc --noconfirm
-
-### Jupyter Extra Dependencies
-RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
-    python-ruff \
-    python-isort \
-    python-black \
-    \
-    uv \
-    && sudo pacman -Scc --noconfirm
-
-## Local setup
-WORKDIR ${NB_HOME}
-
-RUN uv venv --system-site-packages
-RUN uv pip install --no-cache-dir \
-    jupyterlab
-
-RUN uv run jupyter labextension disable "@jupyterlab/apputils-extension:announcements"
+# TODO: currently broken, wait until PyPI is fixed
+# RUN uv pip install --no-cache-dir \
+#     manim[jupyterlab]
+#     manim
+# RUN uv run manim checkhealth
 
 ENTRYPOINT [ "uv", "run" ]
