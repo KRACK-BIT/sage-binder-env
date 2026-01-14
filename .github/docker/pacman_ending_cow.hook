@@ -1,0 +1,14 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = When ending pacman, show a cute cowsay message
+
+Exec = /usr/bin/cowsay -f tux "Good job, pacman!"
+
+# This hook will be executed after every pacman transaction
+When = PostTransaction

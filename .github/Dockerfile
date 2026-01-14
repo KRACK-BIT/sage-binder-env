@@ -1,66 +1,81 @@
 # Multi-stage Dockerfile for slim Sage
 # https://docs.docker.com/build/building/multi-stage
 
-FROM ghcr.io/sagemath/sage/sage-ubuntu-noble-standard-with-targets:10.8 AS target
+FROM docker.io/library/archlinux:latest
 
-# Resolve symbolic links to recreate them later
-RUN readlink /sage/prefix >> /sage/prefix_link
-RUN readlink /sage/venv >> /sage/venv_link
+## Update the pacman package database
+RUN pacman -Syu --noconfirm && pacman -S --noconfirm --needed \
+    aria2 \
+    \
+    sudo \
+    zsh \
+    \
+    python-pip \
+    && pacman -Scc --noconfirm
 
-WORKDIR /sage
+### <https://wiki.archlinux.org/title/Pacman#Configuration>
+RUN mkdir -p /root/.config/aria2/
+COPY docker/aria2.conf /root/.config/aria2/pacman-aria2.conf
+COPY docker/pacman-docker-extra.conf /etc/pacman.d/pacman-docker-extra.conf
+### Could use multiple -e, since `;` is specified in POSIX; <https://stackoverflow.com/questions/6280599/how-portable-is-it-to-use-semi-colons-as-command-separators-in-sed/20769695#20769695>
+RUN sed -i -e 's/^NoProgressBar$/#NoProgressBar/' /etc/pacman.conf \
+    # && sed -i -e '/usr\/share\/man/d' /etc/pacman.conf \
+    && printf "\n\n## Include \`Dockerfile\` customizations\n[options]\nInclude = /etc/pacman.d/pacman-docker-extra.conf" >> /etc/pacman.conf
 
-# Clean up before copying in the next stage
-RUN rm -rf \
-    /sage/local/share/doc \
-    /sage/local/share/*/doc \
-    /sage/local/share/*/examples \
-    /sage/local/share/singular/html
+## Sagemath
 
-# Remove all __pycache__ directories
-RUN find /sage -type d -name "__pycache__" -exec rm -rf {} +
+### Sagemath-generic Optional Dependencies
+RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+    cryptominisat \
+    python-pyscipopt \
+    shared_meataxe \
+    msolve \
+    rubiks \
+    \
+    pari-seadata \
+    \
+    dot2tex \
+    cython \
+    && pacman -Scc --noconfirm
 
-# Remove all .c .cpp files corresponding to .pyx files
-RUN find /sage -name "*.pyx" | sed 's/\(.*\)[.]pyx$/\1.c \1.cpp/' | xargs rm -f +
+### SageMath Base Dependencies
+RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+    sagemath \
+    ### Sagemath-specific Optional Dependencies
+    sage-data-elliptic_curves \
+    sagemath-giac \
+    sage-data-cunningham_tables \
+    && pacman -Scc --noconfirm
 
-# Strip executables in /sage
-RUN LC_ALL=C find \
-    /sage/local \
-    /sage/src \
-    /sage/pkgs \
-    -type f -exec strip '{}' ';' 2>&1 | grep -v "file format not recognized" || true
+## Jupyter
 
-FROM ghcr.io/sagemath/sage/sage-ubuntu-noble-standard-with-system-packages:10.8
+### Jupyter base dependencies
+# RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+#     jupyter-notebook \
+#     jupyterlab \
+#     \
+#     python-ipywidgets \
+#     jupyterlab-widgets \
+#     \
+#     python-jupyter-server-terminals \
+#     \
+#     && pacman -Scc --noconfirm
 
-USER root
+### Jupyter Extra Dependencies
+RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+    python-ruff \
+    python-isort \
+    python-black \
+    \
+    uv \
+    \
+    # python-phitigra \
+    && pacman -Scc --noconfirm
 
-# Remove warnings
-ENV DEBIAN_FRONTEND noninteractive
-ENV DEBCONF_NOWARNINGS="yes"
-
-# Install JupyterLab to the system
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends python3-pip
-RUN python3 -m pip install --no-warn-script-location --no-cache-dir notebook jupyterlab ipywidgets
+# RUN python3 -m pip install --no-warn-script-location --no-cache-dir --break-system-packages \
+#     # dask-labextension \
+#     jupyter-server-proxy \
+#     jupyterlab-code-formatter
 
 # Disable annoying popup for Jupyter news
 RUN jupyter labextension disable "@jupyterlab/apputils-extension:announcements"
-
-# Install /sage from target
-COPY --from=target /sage/local /sage/local
-COPY --from=target /sage/src/bin /sage/src/bin
-COPY --from=target /sage/src/sage /sage/src/sage
-COPY --from=target /sage/sage /sage/sage
-# COPY --from=target /sage/pkgs/sage-conf /sage/pkgs/sage-conf
-
-# Recreate symbolic links
-COPY --from=target /sage/prefix_link /sage/prefix_link
-COPY --from=target /sage/venv_link /sage/venv_link
-RUN ln -s $(cat /sage/prefix_link) /sage/prefix && rm /sage/prefix_link
-RUN ln -s $(cat /sage/venv_link) /sage/venv && rm /sage/venv_link
-
-# Configure Sage library
-RUN /sage/sage -pip install --root-user-action=ignore /sage/pkgs/sage-conf
-
-# Remove problematic lines!
-RUN sed -i '/^__requires__/d' /sage/venv/bin/sage-venv-config
-RUN sed -i '/^__import__/d' /sage/venv/bin/sage-venv-config
