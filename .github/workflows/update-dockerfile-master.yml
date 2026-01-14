@@ -46,24 +46,24 @@ jobs:
           push: true
           tags: ${{ env.PACKAGE_NAME }}
 
-      # # Update files for Binder
-      # - name: Checkout code
-      #   uses: actions/checkout@v4
-      #   with:
-      #     ref: ${{ env.BRANCH_DEPLOY }}
-      # - name: Update files for Binder
-      #   run: |
-      #     PACKAGE_NAME=${{ env.PACKAGE_NAME }}
-      #     PACKAGE_NAME_ESCAPED=$(echo "${PACKAGE_NAME}" | sed 's/\//\\\//g')
-      #     sed -i "s/FROM \S*/FROM ${PACKAGE_NAME_ESCAPED}/g" Dockerfile
-      #     git config --global user.email alice@wonderland
-      #     git config --global user.name alice
-      #     git commit -a --amend -m "Update files for Binder"
-      #     git push -f origin $BRANCH
+      # Update files for Binder
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH_DEPLOY }}
+      - name: Update files for Binder
+        run: |
+          PACKAGE_NAME=${{ env.PACKAGE_NAME }}
+          PACKAGE_NAME_ESCAPED=$(echo "${PACKAGE_NAME}" | sed 's/\//\\\//g')
+          sed -i "s/FROM \S*/FROM ${PACKAGE_NAME_ESCAPED}/g" Dockerfile
+          git config --global user.email deploy@placeholder
+          git config --global user.name deploy
+          git commit -a --amend -m "Update files for Binder"
+          git push -f origin $BRANCH
 
-      # # Build docker image for Binder from Dockerfile at root
-      # - name: Binder build
-      #   timeout-minutes: 30
-      #   continue-on-error: true
-      #   run: |
-      #     curl --keepalive-time 600 -L https://mybinder.org/build/gh/KRACK-BIT/sage-binder-env/$BRANCH
+      # Build docker image for Binder from Dockerfile at root
+      - name: Binder build
+        timeout-minutes: 30
+        continue-on-error: true
+        run: |
+          curl --keepalive-time 600 -L https://mybinder.org/build/gh/KRACK-BIT/sage-binder-env/${{ env.BRANCH_DEPLOY }}
