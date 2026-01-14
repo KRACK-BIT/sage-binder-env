@@ -147,12 +147,6 @@ RUN uv pip install --no-cache-dir \
     && uv cache clean && uv cache prune
 RUN uv run jupyter labextension disable "@jupyterlab/apputils-extension:announcements"
 
-RUN uv pip install --no-cache-dir \
-    notebook \
-    ipywidgets \
-    jupyterlab \
-    jupyter_server_terminals
-
 ###--MANIM_install--###
 
 # RUN yay -Sy --cleanafter && yay -S --noconfirm --needed --cleanafter  \
