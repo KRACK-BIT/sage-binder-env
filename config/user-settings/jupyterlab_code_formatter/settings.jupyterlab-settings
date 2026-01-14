@@ -8,8 +8,8 @@
   "formatOnSave": true,
   "preferences": {
     "default_formatter": {
-      "python": ["isort", "black"],
-      "sage": ["isort", "black"],
+      "python": ["ruff", "ruffformat"], // ["isort", "black"],
+      "sage": ["ruff", "ruffformat"], // ["isort", "black"],
       "R": "formatR",
       "rust": "rustfmt",
       "c++11": "astyle"
@@ -35,5 +35,17 @@
     // "ensure_newline_before_comments": true,
     // "line_length": 88,
     "profile": "black"
+  },
+
+  // Ruff Check Config
+  // Command line options to be passed to ruff check.  Default is to organise imports.
+  "ruff": {
+    "args": ["--select=I001"]
+  },
+
+  // Ruff Format Config
+  // Command line options to be passed to ruff format.
+  "ruffformat": {
+    "args": ["--preview", "--line-length=88"]
   }
 }

@@ -37,8 +37,8 @@ RUN uv pip install --no-cache-dir \
 ### Language Tools
 RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     python-ruff \
-    python-isort \
-    python-black \
+    # python-isort \
+    # python-black \
     && sudo pacman -Scc --noconfirm
 
 ### QOL tools
@@ -46,6 +46,9 @@ RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     jq \
     bat \
     less \
+    \
+    tree \
+    \
     xxhash \
     && sudo pacman -Scc --noconfirm
 
@@ -62,13 +65,17 @@ RUN jq -Mc '. + {"metadata": {"debugger": true}}' \
 #> Create the jupyter_lab_config.py file with a custom logging filter to
 #> suppress the perpetual nodejs warning
 RUN mkdir -p ${NB_HOME}/.jupyter
-COPY --chown=${NB_USER}:${NB_USER} config/jupyter_lab_config.py ${NB_HOME}/.jupyter/jupyter_lab_config.py
+COPY --chown=${NB_USER}:${NB_USER} \
+    config/jupyter_lab_config.py \
+    ${NB_HOME}/.jupyter/jupyter_lab_config.py
 
 RUN uv run jupyter notebook --generate-config
 RUN echo "c.JupyterNotebookApp.default_url = '/lab'" >> ${NB_HOME}/.jupyter/jupyter_notebook_config.py
 
 RUN mkdir -p ${NB_HOME}/.jupyter/lab/user-settings
-COPY --chown=${NB_USER}:${NB_USER} config/user-settings/ ${NB_HOME}/.jupyter/lab/user-settings
+COPY --chown=${NB_USER}:${NB_USER} \
+    config/user-settings/ \
+    ${NB_HOME}/.jupyter/lab/user-settings
 
 #> Start in the home directory of the user
 #> Make sure the contents of the notebooks directory are in ${HOME}
