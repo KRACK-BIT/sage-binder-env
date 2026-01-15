@@ -80,6 +80,17 @@ RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     cython \
     && sudo pacman -Scc --noconfirm
 
+### Big dependent tools (to fragment image)
+RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+    gap \
+    && sudo pacman -Scc --noconfirm
+RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+    maxima \
+    && sudo pacman -Scc --noconfirm
+RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+    giac \
+    && sudo pacman -Scc --noconfirm
+
 ### SageMath + Base Dependencies
 RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     sagemath \
