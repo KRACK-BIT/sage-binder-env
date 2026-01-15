@@ -138,9 +138,10 @@ RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     uv \
     && sudo pacman -Scc --noconfirm
 
-RUN uv venv --system-site-packages
+RUN uv venv --system-site-packages --seed
 RUN uv pip install --no-cache-dir \
     notebook \
+    ipykernel \
     ipywidgets \
     jupyterlab \
     jupyter_server_terminals \
