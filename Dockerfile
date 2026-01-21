@@ -37,8 +37,8 @@ RUN uv pip install --no-cache-dir \
 ### Language Tools
 RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     python-ruff \
-    # python-isort \
-    # python-black \
+    python-isort \
+    python-black \
     && sudo pacman -Scc --noconfirm
 
 ### QOL tools
