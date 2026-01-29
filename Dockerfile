@@ -18,6 +18,11 @@ RUN uv pip install --no-cache-dir \
     dot2tex \
     igraph \
     \
+    socat \
+    python-tqdm \
+    python-pycryptodome \
+    python-pwntools \
+    \
     #> <https://github.com/pythonprofilers/memory_profiler>
     # python3-memory-profiler \
     # google-perftools \
