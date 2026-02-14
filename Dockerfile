@@ -10,18 +10,12 @@ ENV DATA_DIR=${NB_HOME}
 RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     gcc \
     # sagetex \
-    # python-phitigra \
     && sudo pacman -Scc --noconfirm
 
 RUN uv pip install --no-cache-dir \
     # manim \
     dot2tex \
     igraph \
-    \
-    socat \
-    python-tqdm \
-    python-pycryptodome \
-    python-pwntools \
     \
     #> <https://github.com/pythonprofilers/memory_profiler>
     # python3-memory-profiler \
@@ -55,6 +49,15 @@ RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     tree \
     \
     xxhash \
+    socat \
+    && sudo pacman -Scc --noconfirm
+
+### Pkgs
+RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
+    # python-phitigra \
+    python-tqdm \
+    python-pycryptodome \
+    python-pwntools \
     && sudo pacman -Scc --noconfirm
 
 ###===Config===###
