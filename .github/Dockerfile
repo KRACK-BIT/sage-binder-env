@@ -113,6 +113,7 @@ RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     texlive-latexrecommended \
     \
     texlive-xetex \
+    texlive-luatex \
     texlive-fontsrecommended \
     \
     texlive-langgreek \
@@ -130,6 +131,7 @@ RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     cairo \
     pango \
     ffmpeg \
+    poppler \
     && sudo pacman -Scc --noconfirm
 
 ###--JUPYTER--###
