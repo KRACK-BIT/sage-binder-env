@@ -58,6 +58,8 @@ RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     python-tqdm \
     python-pycryptodome \
     python-pwntools \
+    \
+    python-colorcet \
     && sudo pacman -Scc --noconfirm
 
 ###===Config===###
