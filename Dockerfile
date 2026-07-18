@@ -10,19 +10,21 @@ ENV DATA_DIR=${NB_HOME}
 RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     gcc \
     # sagetex \
+    memray \
+    python-igraph \
     && sudo pacman -Scc --noconfirm
 
 RUN uv pip install --no-cache-dir \
     # manim \
-    dot2tex \
-    igraph \
+    # dot2tex \
+    # igraph \
     \
     #> <https://github.com/pythonprofilers/memory_profiler>
     # python3-memory-profiler \
     # google-perftools \
     \
     #> <https://github.com/bloomberg/memray>
-    memray \
+    # memray \
     \
     line-profiler
 
@@ -56,11 +58,25 @@ RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
 RUN sudo pacman -Sy && sudo pacman -S --noconfirm --needed  \
     # python-phitigra \
     python-tqdm \
+    python-rich \
+    python-colorcet \
+    \
     python-pycryptodome \
     python-pwntools \
     \
-    python-colorcet \
+    python-xarray \
+    python-plotly \
+    \
+    python-polars \
+    \
+    python-scapy \
+    scapy \
+    \
+    python-xxhash \
+    python-numba \
     && sudo pacman -Scc --noconfirm
+# python-tensorflow
+
 
 ###===Config===###
 
