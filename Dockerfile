@@ -1,7 +1,7 @@
 # Dockerfile for binder
 # Reference: https://mybinder.readthedocs.io/en/latest/tutorials/dockerfile.html
 
-FROM ghcr.io/krack-bit/sage-binder-env:10.9
+FROM ghcr.io/krack-bit/sage-binder-env:10.10
 
 ENV DATA_DIR=${NB_HOME}
 
